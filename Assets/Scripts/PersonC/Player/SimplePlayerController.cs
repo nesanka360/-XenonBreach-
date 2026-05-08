@@ -4,10 +4,13 @@ public class SimplePlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public float mouseSensitivity = 2f;
+
     public Transform cameraTransform;
 
     private CharacterController controller;
-    private float cameraPitch = 0f;
+
+    private float yaw = 0f;
+    private float pitch = 0f;
 
     void Start()
     {
@@ -16,6 +19,7 @@ public class SimplePlayerController : MonoBehaviour
         if (cameraTransform == null)
         {
             Camera cam = Camera.main;
+
             if (cam != null)
                 cameraTransform = cam.transform;
         }
@@ -23,13 +27,13 @@ public class SimplePlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        Debug.Log("[C] Simple player controller started");
+        Debug.Log("[C] Free-look controller started");
     }
 
     void Update()
     {
         MovePlayer();
-        LookAround();
+        FreeLook();
     }
 
     void MovePlayer()
@@ -37,22 +41,27 @@ public class SimplePlayerController : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * x + transform.forward * z;
+        Vector3 move =
+            cameraTransform.forward * z +
+            cameraTransform.right * x;
+
+        move.y = 0f;
+
         controller.Move(move * moveSpeed * Time.deltaTime);
     }
 
-    void LookAround()
+    void FreeLook()
     {
         if (cameraTransform == null) return;
 
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        transform.Rotate(Vector3.up * mouseX);
+        yaw += mouseX;
+        pitch -= mouseY;
 
-        cameraPitch -= mouseY;
-        cameraPitch = Mathf.Clamp(cameraPitch, -80f, 80f);
+        pitch = Mathf.Clamp(pitch, -80f, 80f);
 
-        cameraTransform.localRotation = Quaternion.Euler(cameraPitch, 0f, 0f);
+        cameraTransform.rotation = Quaternion.Euler(pitch, yaw, 0f);
     }
 }
