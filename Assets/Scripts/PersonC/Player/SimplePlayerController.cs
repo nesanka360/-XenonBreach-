@@ -37,18 +37,24 @@ public class SimplePlayerController : MonoBehaviour
     }
 
     void MovePlayer()
+{
+    float x = Input.GetAxis("Horizontal");
+    float z = Input.GetAxis("Vertical");
+
+    Vector3 move =
+        cameraTransform.forward * z +
+        cameraTransform.right * x;
+
+    move.y = 0f;
+    move.Normalize();
+
+    if (move.magnitude > 0.1f)
     {
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
-
-        Vector3 move =
-            cameraTransform.forward * z +
-            cameraTransform.right * x;
-
-        move.y = 0f;
-
-        controller.Move(move * moveSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.LookRotation(move);
     }
+
+    controller.Move(move * moveSpeed * Time.deltaTime);
+}
 
     void FreeLook()
     {
