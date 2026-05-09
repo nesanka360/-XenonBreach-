@@ -294,11 +294,8 @@ MonoBehaviour:
   drainRate: 15
   recoveryRate: 5
   safeDistance: 8
-  healthBar: {fileID: 0}
-  geigerImage: {fileID: 0}
-  geigerAudio: {fileID: 0}
-  safeColor: {r: 0, g: 1, b: 0, a: 1}
-  dangerColor: {r: 1, g: 0, b: 0, a: 1}
+  healthBar: {fileID: 614776647}
+  gameOverPanel: {fileID: 678386501}
 --- !u!1 &242896300
 GameObject:
   m_ObjectHideFlags: 0

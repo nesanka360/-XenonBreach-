@@ -4,30 +4,34 @@ using UnityEngine.UI;
 public class HealthSystem : MonoBehaviour
 {
     public float maxHealth = 100f;
-    public float killingZoneRadius = 20f;
+    public float killingZoneRadius = 5f;
     public float drainRate = 15f;
     public float recoveryRate = 5f;
-    public float safeDistance = 8f;
+    public float safeDistance = 10f;
 
     public Slider healthBar;
-    public UnityEngine.UI.Image geigerImage;
-    public AudioSource geigerAudio;
 
-    public Color safeColor = Color.green;
-    public Color dangerColor = Color.red;
+    public GameObject gameOverPanel;
 
     private float currentHealth;
+    private bool isDead = false;
 
     void Start()
     {
         currentHealth = maxHealth;
-        UpdateUI(false);
+
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(false);
+
+        UpdateHealthBar();
 
         Debug.Log("[C] Health system started");
     }
 
     void Update()
     {
+        if (isDead) return;
+
         float nearestDist = GetNearestAlienDistance();
 
         bool inKillZone = nearestDist < killingZoneRadius;
@@ -44,34 +48,19 @@ public class HealthSystem : MonoBehaviour
 
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
 
-        UpdateUI(inKillZone);
-
-        if (inKillZone)
-        {
-            Debug.Log("[C] Radiation danger! Health: " + currentHealth);
-        }
+        UpdateHealthBar();
 
         if (currentHealth <= 0f)
         {
-            Debug.Log("[C] Player died from radiation exposure");
+            GameOver();
         }
     }
 
-    void UpdateUI(bool danger)
+    void UpdateHealthBar()
     {
         if (healthBar != null)
-            healthBar.value = currentHealth / maxHealth;
-
-        if (geigerImage != null)
-            geigerImage.color = danger ? dangerColor : safeColor;
-
-        if (geigerAudio != null)
         {
-            if (danger && !geigerAudio.isPlaying)
-                geigerAudio.Play();
-
-            if (!danger && geigerAudio.isPlaying)
-                geigerAudio.Stop();
+            healthBar.value = currentHealth / maxHealth;
         }
     }
 
@@ -83,12 +72,35 @@ public class HealthSystem : MonoBehaviour
 
         foreach (GameObject alien in aliens)
         {
-            float distance = Vector3.Distance(transform.position, alien.transform.position);
+            float distance =
+                Vector3.Distance(
+                    transform.position,
+                    alien.transform.position
+                );
 
             if (distance < minDistance)
+            {
                 minDistance = distance;
+            }
         }
 
         return minDistance;
+    }
+
+    void GameOver()
+    {
+        isDead = true;
+
+        Debug.Log("[C] GAME OVER");
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+        }
+
+        Time.timeScale = 0f;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }
