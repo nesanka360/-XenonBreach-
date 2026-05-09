@@ -123,6 +123,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &16353125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 16353126}
+  m_Layer: 0
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &16353126
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16353125}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.87, y: 0.8, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 69245171}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &69245165
 GameObject:
   m_ObjectHideFlags: 0
@@ -138,6 +169,7 @@ GameObject:
   - component: {fileID: 69245167}
   - component: {fileID: 69245166}
   - component: {fileID: 69245172}
+  - component: {fileID: 69245173}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -275,6 +307,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1412649696}
+  - {fileID: 16353126}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &69245172
@@ -296,6 +329,22 @@ MonoBehaviour:
   safeDistance: 8
   healthBar: {fileID: 614776647}
   gameOverPanel: {fileID: 678386501}
+--- !u!114 &69245173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69245165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 168ff9be29bbe284a9497515aa316284, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireProjectilePrefab: {fileID: 8657410309790206406, guid: 30905edd4d67ea14498463f2e9e8488d,
+    type: 3}
+  firePoint: {fileID: 16353126}
+  shootForce: 15
 --- !u!1 &242896300
 GameObject:
   m_ObjectHideFlags: 0
