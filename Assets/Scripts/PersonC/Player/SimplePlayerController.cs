@@ -3,71 +3,80 @@ using UnityEngine;
 public class SimplePlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
-    public float mouseSensitivity = 2f;
+    public float turnSpeed = 120f;
 
     public Transform cameraTransform;
+    public Vector3 cameraOffset = new Vector3(0f, 2.2f, -4.5f);
+    public float cameraFollowSpeed = 10f;
 
     private CharacterController controller;
-
-    private float yaw = 0f;
-    private float pitch = 0f;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
 
-        if (cameraTransform == null)
-        {
-            Camera cam = Camera.main;
-
-            if (cam != null)
-                cameraTransform = cam.transform;
-        }
+        if (cameraTransform == null && Camera.main != null)
+            cameraTransform = Camera.main.transform;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        Debug.Log("[C] Free-look controller started");
+        Debug.Log("[C] Game started");
     }
 
     void Update()
     {
+        RotatePlayer();
         MovePlayer();
-        FreeLook();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+
+    void LateUpdate()
+    {
+        FollowCamera();
+    }
+
+    void RotatePlayer()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+
+        transform.Rotate(
+            0f,
+            horizontal * turnSpeed * Time.deltaTime,
+            0f
+        );
     }
 
     void MovePlayer()
-{
-    float x = Input.GetAxis("Horizontal");
-    float z = Input.GetAxis("Vertical");
-
-    Vector3 move =
-        cameraTransform.forward * z +
-        cameraTransform.right * x;
-
-    move.y = 0f;
-    move.Normalize();
-
-    if (move.magnitude > 0.1f)
     {
-        transform.rotation = Quaternion.LookRotation(move);
+        float vertical = Input.GetAxis("Vertical");
+
+        Vector3 moveDirection = transform.forward * vertical;
+
+        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
     }
 
-    controller.Move(move * moveSpeed * Time.deltaTime);
-}
-
-    void FreeLook()
+    void FollowCamera()
     {
         if (cameraTransform == null) return;
 
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        Vector3 targetPosition =
+            transform.position
+            + transform.right * cameraOffset.x
+            + transform.up * cameraOffset.y
+            + transform.forward * cameraOffset.z;
 
-        yaw += mouseX;
-        pitch -= mouseY;
+        cameraTransform.position = Vector3.Lerp(
+            cameraTransform.position,
+            targetPosition,
+            cameraFollowSpeed * Time.deltaTime
+        );
 
-        pitch = Mathf.Clamp(pitch, -80f, 80f);
-
-        cameraTransform.rotation = Quaternion.Euler(pitch, yaw, 0f);
+        cameraTransform.LookAt(transform.position + Vector3.up * 1.4f);
     }
 }
