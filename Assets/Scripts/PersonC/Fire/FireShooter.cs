@@ -8,9 +8,13 @@ public class FireShooter : MonoBehaviour
 
     public float shootForce = 15f;
 
+    public float cooldownTime = 10f;
+
+    private bool canShoot = true;
+
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && canShoot)
         {
             Shoot();
         }
@@ -18,8 +22,16 @@ public class FireShooter : MonoBehaviour
 
     void Shoot()
     {
+        canShoot = false;
+
         if (fireProjectilePrefab == null || firePoint == null)
+        {
+            Debug.LogWarning("[C] FireShooter missing prefab or fire point");
+
+            canShoot = true;
+
             return;
+        }
 
         GameObject projectile =
             Instantiate(
@@ -39,5 +51,16 @@ public class FireShooter : MonoBehaviour
         }
 
         Destroy(projectile, 6f);
+
+        Debug.Log("[C] Flamethrower fired");
+
+        Invoke(nameof(ResetShoot), cooldownTime);
+    }
+
+    void ResetShoot()
+    {
+        canShoot = true;
+
+        Debug.Log("[C] Flamethrower ready again");
     }
 }
